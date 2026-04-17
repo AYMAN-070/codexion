@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:59:02 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/17 16:04:29 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/17 16:19:04 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,19 @@ typedef struct s_dongle
 	t_queue			*queue;
 }	t_dongle;
 
+struct sim;
+
+typedef struct s_coder
+{
+	int				id;
+	pthread_t		thread;
+	long			last_compile_start;
+	int				compiles_done;
+	t_dongle		*left_dongle;
+	t_dongle		*right_dongle;
+	struct sim		*sim;
+}	t_coder;
+
 typedef struct sim
 {
 	int				nb_coders;
@@ -66,17 +79,6 @@ typedef struct sim
 	t_dongle		*dongles;
 	t_coder			*coders;
 }	t_sim;
-
-typedef struct s_coder
-{
-	int				id;
-	pthread_t		thread;
-	long			last_compile_start;
-	int				compiles_done;
-	t_dongle		*left_dongle;
-	t_dongle		*right_dongle;
-	struct s_sim	*sim;
-}	t_coder;
 
 int	parse_args(int argc, char **argv, t_sim *sim);
 
