@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:59:02 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/17 16:19:04 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/21 18:27:59 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ typedef struct s_dongle
 	t_queue			*queue;
 }	t_dongle;
 
-struct sim;
+struct	s_sim;
 
 typedef struct s_coder
 {
@@ -62,7 +62,7 @@ typedef struct s_coder
 	struct sim		*sim;
 }	t_coder;
 
-typedef struct sim
+typedef struct s_sim
 {
 	int				nb_coders;
 	int				time_to_burnout;
@@ -80,6 +80,14 @@ typedef struct sim
 	t_coder			*coders;
 }	t_sim;
 
-int	parse_args(int argc, char **argv, t_sim *sim);
+int		parse_args(int argc, char **argv, t_sim *sim);
+
+int		init_simulation(t_sim *sim);
+
+void	free_simulation(t_sim *sim);
+
+long	get_current_time_ms(void);
+
+void	print_status(t_sim *sim, int coder_id, char *status)
 
 #endif
