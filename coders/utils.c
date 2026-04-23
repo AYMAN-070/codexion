@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 21:33:32 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/21 18:19:20 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 20:47:52 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,24 @@ long	get_current_time_ms(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
+void	ms_sleep(long time_in_ms)
+{
+	long	start_time;
+
+	start_time = get_current_time_ms();
+	while ((get_current_time_ms() - start_time) < time_in_ms)
+	{
+		usleep(500);
+	}
+}
+
 void	print_status(t_sim *sim, int coder_id, char *status)
 {
 	long	current_time;
 
 	pthread_mutex_lock(&sim->print_mutex);
 	pthread_mutex_lock(&sim->state_mutex);
-	if (sim->is_running)
+	if (check_sim_status(sim))
 	{
 		current_time = get_current_time_ms() - sim->start_time;
 		printf("%ld %d %s\n", current_time, coder_id, status);

@@ -6,25 +6,47 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 16:12:27 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/21 18:26:10 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/22 19:26:19 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static void	init_dongles(t_sim *sim)
+int	init_dongles(t_sim *sim)
 {
 	int	i;
 
 	i = 0;
 	while (i < sim->nb_coders)
 	{
-		sim->dongles[i].id = i + 1;
+		sim->dongles[i].id = i;
 		sim->dongles[i].is_available = 1;
 		sim->dongles[i].available_at = 0;
 		pthread_mutex_init(&sim->dongles[i].mutex, NULL);
 		pthread_cond_init(&sim->dongles[i].cond, NULL);
-		sim->dongles[i].queue = NULL;
+		sim->dongles[i].queue = malloc(sizeof(t_queue));
+		if (!sim->dongles[i].queue)
+			return (0);
+		sim->dongles[i].queue->nodes = malloc(sizeof(t_qnode) * sim->nb_coders);
+		sim->dongles[i].queue->capacity = sim->nb_coders;
+		sim->dongles[i].queue->size = 0;
+		i++;
+	}
+	return (1);
+}
+
+void	init_coders(t_sim *sim)
+{
+	int	i;
+
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		sim->coders[i].id = i;
+		sim->coders[i].compiles_done = 0;
+		sim->coders[i].sim = sim;
+		sim->coders[i].left_dongle = &sim->dongles[i];
+		sim->coders[i].right_dongle = &sim->dongles[(i + 1) % sim->nb_coders];
 		i++;
 	}
 }
@@ -40,17 +62,9 @@ int	init_simulation(t_sim *sim)
 	pthread_mutex_init(&sim->print_mutex, NULL);
 	pthread_mutex_init(&sim->state_mutex, NULL);
 	sim->is_running = 1;
-	init_dongles(sim);
-	i = 0;
-	while (i < sim->nb_coders)
-	{
-		sim->coders[i].id = i + 1;
-		sim->coders[i].compiles_done = 0;
-		sim->coders[i].sim = sim;
-		sim->coders[i].left_dongle = &sim->dongles[i];
-		sim->coders[i].right_dongle = &sim->dongles[(i + 1) % sim->nb_coders];
-		i++;
-	}
+	if (!init_dongles(sim))
+		return (0);
+	init_coders(sim);
 	return (1);
 }
 
@@ -65,6 +79,12 @@ void	free_simulation(t_sim *sim)
 		{
 			pthread_mutex_destroy(&sim->dongles[i].mutex);
 			pthread_cond_destroy(&sim->dongles[i].cond);
+			if (sim->dongles[i].queue)
+			{
+				if (sim->dongles[i].queue->nodes)
+					free(sim->dongles[i].queue->nodes);
+				free(sim->dongles[i].queue);
+			}
 			i++;
 		}
 		free(sim->dongles);

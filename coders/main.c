@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 21:33:19 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/21 18:26:52 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 21:51:47 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,30 @@ int	parse_args(int argc, char **argv, t_sim *sim)
 	return (1);
 }
 
+int	start_simulation(t_sim *sim)
+{
+	int			i;
+	pthread_t	monitor_thread;
+
+	sim->start_time = get_current_time_ms();
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		sim->coders[i].last_compile_start = sim->start_time;
+		pthread_create(&sim->coders[i].thread, NULL,
+			coder_routine, &sim->coders[i]);
+		i++;
+	}
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		pthread_join(sim->coders[i].thread, NULL);
+		i++;
+	}
+	pthread_join(monitor_thread, NULL);
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_sim	sim;
@@ -76,6 +100,7 @@ int	main(int argc, char **argv)
 	if (!init_simulation(&sim))
 		return (1);
 	printf("Initialisation reussie ! %d codeurs prets.\n", sim.nb_coders);
+	start_simulation(&sim);
 	free_simulation(&sim);
 	return (0);
 }

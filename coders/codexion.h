@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:59:02 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/21 18:27:59 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 21:51:35 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <sys/time.h>
 # include <string.h>
 
-typedef enum scheduler
+typedef enum s_scheduler
 {
 	FIFO,
 	EDF
@@ -59,7 +59,7 @@ typedef struct s_coder
 	int				compiles_done;
 	t_dongle		*left_dongle;
 	t_dongle		*right_dongle;
-	struct sim		*sim;
+	struct s_sim	*sim;
 }	t_coder;
 
 typedef struct s_sim
@@ -87,7 +87,17 @@ int		init_simulation(t_sim *sim);
 void	free_simulation(t_sim *sim);
 
 long	get_current_time_ms(void);
+void	*monitor_routine(void *arg);
+void	print_status(t_sim *sim, int coder_id, char *status);
+void	push_queue(t_queue *q, int coder_id, long priority);
+void	pop_queue(t_queue *q);
+int		peek_queue(t_queue *q);
 
-void	print_status(t_sim *sim, int coder_id, char *status)
+int		init_simulation(t_sim *sim);
+void	*coder_routine(void *arg);
+
+long	get_current_time_ms(void);
+void	print_status(t_sim *sim, int coder_id, char *status);
+int		check_sim_status(t_sim *sim);
 
 #endif
