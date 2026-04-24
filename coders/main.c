@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 21:33:19 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 21:51:47 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 22:21:48 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int	start_simulation(t_sim *sim)
 			coder_routine, &sim->coders[i]);
 		i++;
 	}
+	pthread_create(&monitor_thread, NULL, monitor_routine, sim);
 	i = 0;
 	while (i < sim->nb_coders)
 	{

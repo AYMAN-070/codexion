@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 21:19:40 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 21:41:03 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 22:31:05 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static int	check_death(t_sim *sim, t_coder *coder)
 	long	time_since_last_meal;
 
 	pthread_mutex_lock(&sim->state_mutex);
-	if (sim->nb_compiles_required > 0
-		&& coder->compiles_done >= sim->nb_compiles_required)
+	if (sim->nb_compiles_req> 0
+		&& coder->compiles_done >= sim->nb_compiles_req)
 	{
 		pthread_mutex_unlock(&sim->state_mutex);
 		return (0);
@@ -43,14 +43,14 @@ static int	check_all_compiles(t_sim *sim)
 	int	i;
 	int	finished_count;
 
-	if (sim->nb_compiles_required <= 0)
+	if (sim->nb_compiles_req <= 0)
 		return (0);
 	finished_count = 0;
 	i = 0;
 	while (i < sim->nb_coders)
 	{
 		pthread_mutex_lock(&sim->state_mutex);
-		if (sim->coders[i].compiles_done >= sim->nb_compiles_required)
+		if (sim->coders[i].compiles_done >= sim->nb_compiles_req)
 			finished_count++;
 		pthread_mutex_unlock(&sim->state_mutex);
 		i++;

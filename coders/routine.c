@@ -6,13 +6,13 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 21:09:51 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 21:56:33 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 22:46:30 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static int	check_sim_status(t_sim *sim)
+int	check_sim_status(t_sim *sim)
 {
 	int	status;
 
@@ -58,8 +58,8 @@ static int	has_finished(t_coder *me)
 
 	is_done = 0;
 	pthread_mutex_lock(&me->sim->state_mutex);
-	if (me->sim->nb_compiles_required > 0
-		&& me->compiles_done >= me->sim->nb_compiles_required)
+	if (me->sim->nb_compiles_req > 0
+		&& me->compiles_done >= me->sim->nb_compiles_req)
 	{
 		is_done = 1;
 	}
@@ -76,8 +76,16 @@ void	*coder_routine(void *arg)
 	{
 		if (has_finished(me))
 			break ;
-		take_dongle(me, me->left_dongle);
-		take_dongle(me, me->right_dongle);
+		if (me->id % 2 == 0)
+		{
+			take_dongle(me, me->left_dongle);
+			take_dongle(me, me->right_dongle);
+		}
+		else
+		{
+			take_dongle(me, me->right_dongle);
+			take_dongle(me, me->left_dongle);
+		}
 		pthread_mutex_lock(&me->sim->state_mutex);
 		me->last_compile_start = get_current_time_ms();
 		me->compiles_done++;

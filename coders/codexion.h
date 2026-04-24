@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:59:02 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 21:51:35 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 22:30:15 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,5 @@ void	*coder_routine(void *arg);
 long	get_current_time_ms(void);
 void	print_status(t_sim *sim, int coder_id, char *status);
 int		check_sim_status(t_sim *sim);
-
+void    ms_sleep(long time_in_ms);
 #endif

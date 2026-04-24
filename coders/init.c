@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 16:12:27 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/22 19:26:19 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/23 22:24:10 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ void	init_coders(t_sim *sim)
 
 int	init_simulation(t_sim *sim)
 {
-	int	i;
-
 	sim->coders = malloc(sizeof(t_coder) * sim->nb_coders);
 	sim->dongles = malloc(sizeof(t_dongle) * sim->nb_coders);
 	if (!sim->coders || !sim->dongles)
