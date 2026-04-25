@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 15:29:03 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 22:34:20 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/24 15:09:13 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,3 @@ int	peek_queue(t_queue *q)
 		return (-1);
 	return (q->nodes[0].coder_id);
 }
-

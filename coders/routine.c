@@ -6,42 +6,11 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 21:09:51 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 22:46:30 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/25 14:30:03 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-int	check_sim_status(t_sim *sim)
-{
-	int	status;
-
-	pthread_mutex_lock(&sim->state_mutex);
-	status = sim->is_running;
-	pthread_mutex_unlock(&sim->state_mutex);
-	return (status);
-}
-
-static void	take_dongle(t_coder *me, t_dongle *dongle)
-{
-	long	priority;
-
-	if (me->sim->scheduler == FIFO)
-		priority = get_current_time_ms();
-	else
-		priority = me->last_compile_start + me->sim->time_to_burnout;
-	pthread_mutex_lock(&dongle->mutex);
-	push_queue(dongle->queue, me->id, priority);
-	while (!dongle->is_available || peek_queue(dongle->queue) != me->id
-		|| get_current_time_ms() < dongle->available_at)
-	{
-		pthread_cond_wait(&dongle->cond, &dongle->mutex);
-	}
-	dongle->is_available = 0;
-	pop_queue(dongle->queue);
-	print_status(me->sim, me->id, "has taken a dongle");
-	pthread_mutex_unlock(&dongle->mutex);
-}
 
 static void	drop_dongle(t_sim *sim, t_dongle *dongle)
 {
@@ -52,52 +21,87 @@ static void	drop_dongle(t_sim *sim, t_dongle *dongle)
 	pthread_mutex_unlock(&dongle->mutex);
 }
 
-static int	has_finished(t_coder *me)
+static int	wait_for_dongle(t_coder *me, t_dongle *d)
 {
-	int	is_done;
-
-	is_done = 0;
-	pthread_mutex_lock(&me->sim->state_mutex);
-	if (me->sim->nb_compiles_req > 0
-		&& me->compiles_done >= me->sim->nb_compiles_req)
+	while (1)
 	{
-		is_done = 1;
+		if (!check_sim_status(me->sim))
+		{
+			pthread_mutex_unlock(&d->mutex);
+			return (0);
+		}
+		if (!d->is_available || peek_queue(d->queue) != me->id)
+			pthread_cond_wait(&d->cond, &d->mutex);
+		else if (get_current_time_ms() < d->available_at)
+		{
+			pthread_mutex_unlock(&d->mutex);
+			usleep(500);
+			pthread_mutex_lock(&d->mutex);
+		}
+		else
+			break ;
 	}
+	return (1);
+}
+
+static int	take_dongle(t_coder *me, t_dongle *d)
+{
+	long	p;
+
+	p = get_current_time_ms();
+	if (me->sim->scheduler != FIFO)
+		p = me->last_compile_start + me->sim->time_to_burnout;
+	pthread_mutex_lock(&d->mutex);
+	push_queue(d->queue, me->id, p);
+	if (!wait_for_dongle(me, d))
+		return (0);
+	d->is_available = 0;
+	pop_queue(d->queue);
+	print_status(me->sim, me->id, "has taken a dongle");
+	pthread_mutex_unlock(&d->mutex);
+	return (1);
+}
+
+static void	execute_work(t_coder *me)
+{
+	pthread_mutex_lock(&me->sim->state_mutex);
+	me->last_compile_start = get_current_time_ms();
+	me->compiles_done++;
 	pthread_mutex_unlock(&me->sim->state_mutex);
-	return (is_done);
+	print_status(me->sim, me->id, "is compiling");
+	ms_sleep(me->sim->time_to_compile);
+	drop_dongle(me->sim, me->left_dongle);
+	drop_dongle(me->sim, me->right_dongle);
+	print_status(me->sim, me->id, "is debugging");
+	ms_sleep(me->sim->time_to_debug);
+	print_status(me->sim, me->id, "is refactoring");
+	ms_sleep(me->sim->time_to_refactor);
 }
 
 void	*coder_routine(void *arg)
 {
-	t_coder	*me;
+	t_coder		*me;
+	t_dongle	*first;
+	t_dongle	*second;
 
 	me = (t_coder *)arg;
+	first = me->left_dongle;
+	second = me->right_dongle;
+	if (me->id % 2 != 0)
+	{
+		first = me->right_dongle;
+		second = me->left_dongle;
+	}
 	while (check_sim_status(me->sim))
 	{
-		if (has_finished(me))
+		if (has_finished(me) || !take_dongle(me, first))
 			break ;
-		if (me->id % 2 == 0)
+		if (!take_dongle(me, second))
 		{
-			take_dongle(me, me->left_dongle);
-			take_dongle(me, me->right_dongle);
+			drop_dongle(me->sim, first);
+			break ;
 		}
-		else
-		{
-			take_dongle(me, me->right_dongle);
-			take_dongle(me, me->left_dongle);
-		}
-		pthread_mutex_lock(&me->sim->state_mutex);
-		me->last_compile_start = get_current_time_ms();
-		me->compiles_done++;
-		pthread_mutex_unlock(&me->sim->state_mutex);
-		print_status(me->sim, me->id, "is compiling");
-		ms_sleep(me->sim->time_to_compile);
-		drop_dongle(me->sim, me->left_dongle);
-		drop_dongle(me->sim, me->right_dongle);
-		print_status(me->sim, me->id, "is debugging");
-		ms_sleep(me->sim->time_to_debug);
-		print_status(me->sim, me->id, "is refactoring");
-		ms_sleep(me->sim->time_to_refactor);
+		execute_work(me);
 	}
 	return (NULL);
 }

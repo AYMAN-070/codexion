@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:59:02 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 22:30:15 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/25 14:29:44 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,10 @@ int		peek_queue(t_queue *q);
 
 int		init_simulation(t_sim *sim);
 void	*coder_routine(void *arg);
-
+int		check_sim_status(t_sim *sim);
+int		has_finished(t_coder *me);
 long	get_current_time_ms(void);
 void	print_status(t_sim *sim, int coder_id, char *status);
 int		check_sim_status(t_sim *sim);
-void    ms_sleep(long time_in_ms);
+void	ms_sleep(long time_in_ms);
 #endif
