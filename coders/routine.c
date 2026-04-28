@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 21:09:51 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/28 18:22:11 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/28 23:13:56 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,18 @@ void	*coder_routine(void *arg)
 	t_dongle	*second;
 
 	me = (t_coder *)arg;
-	first = me->left_dongle;
-	second = me->right_dongle;
-	if (me->id % 2 != 0)
+	if (me->left_dongle->id < me->right_dongle->id)
+	{
+		first = me->left_dongle;
+		second = me->right_dongle;
+	}
+	else
 	{
 		first = me->right_dongle;
 		second = me->left_dongle;
 	}
+	if (me->id % 2 != 0)
+		ms_sleep(10);
 	while (check_sim_status(me->sim))
 	{
 		if (has_finished(me) || !take_dongle(me, first))
