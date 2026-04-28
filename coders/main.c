@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 21:33:19 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/25 13:22:24 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/27 23:19:04 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,11 @@ int	main(int argc, char **argv)
 {
 	t_sim	sim;
 
-	setbuf(stdout, NULL);
 	memset(&sim, 0, sizeof(t_sim));
 	if (!parse_args(argc, argv, &sim))
 		return (1);
 	if (!init_simulation(&sim))
 		return (1);
-	printf("Initialisation reussie ! %d codeurs prets.\n", sim.nb_coders);
 	start_simulation(&sim);
 	printf("3. Fin de start_simulation !\n");
 	free_simulation(&sim);
