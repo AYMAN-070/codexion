@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 21:19:40 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/25 14:13:29 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/04/28 19:05:50 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 static int	check_death(t_sim *sim, t_coder *coder)
 {
 	long	time_since_last_meal;
+	int		j;
 
 	pthread_mutex_lock(&sim->state_mutex);
 	if (sim->nb_compiles_req > 0
@@ -28,6 +29,12 @@ static int	check_death(t_sim *sim, t_coder *coder)
 	{
 		sim->is_running = 0;
 		pthread_mutex_unlock(&sim->state_mutex);
+		j = 0;
+		while (j < sim->nb_coders)
+		{
+			pthread_cond_broadcast(&sim->dongles[j].cond);
+			j++;
+		}
 		pthread_mutex_lock(&sim->print_mutex);
 		printf("%ld %d died\n",
 			get_current_time_ms() - sim->start_time, coder->id);
