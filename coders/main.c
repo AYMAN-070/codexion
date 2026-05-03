@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 21:33:19 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/27 23:19:04 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/05/03 14:44:48 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ int	main(int argc, char **argv)
 	if (!init_simulation(&sim))
 		return (1);
 	start_simulation(&sim);
-	printf("3. Fin de start_simulation !\n");
 	free_simulation(&sim);
 	return (0);
 }

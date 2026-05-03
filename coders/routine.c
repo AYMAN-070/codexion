@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 21:09:51 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/28 23:13:56 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/05/03 14:37:41 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	take_dongle(t_coder *me, t_dongle *d)
 {
 	long	p;
 
-	p = get_current_time_ms();
+	p = me->wait_start_time;
 	if (me->sim->scheduler != FIFO)
 		p = me->last_compile_start + me->sim->time_to_burnout;
 	pthread_mutex_lock(&d->mutex);
@@ -99,6 +99,7 @@ void	*coder_routine(void *arg)
 		ms_sleep(10);
 	while (check_sim_status(me->sim))
 	{
+		me->wait_start_time = get_current_time_ms();
 		if (has_finished(me) || !take_dongle(me, first))
 			break ;
 		if (!take_dongle(me, second))
@@ -107,6 +108,7 @@ void	*coder_routine(void *arg)
 			break ;
 		}
 		execute_work(me);
+		usleep(500);
 	}
 	return (NULL);
 }

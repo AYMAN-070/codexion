@@ -1,12 +1,12 @@
 NAME = codexion
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread
-SRCS = main.c \
-       init.c \
-       routine.c \
-       queue.c \
-       utils.c \
-       monitor.c
+SRCS = coders/main.c \
+       coders/init.c \
+       coders/routine.c \
+       coders/queue.c \
+       coders/utils.c \
+       coders/monitor.c
 OBJS = $(SRCS:.c=.o)
 HEADERS = codexion.h
 

@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 15:59:02 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/25 14:29:44 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/05/03 14:29:02 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct s_coder
 	pthread_t		thread;
 	long			last_compile_start;
 	int				compiles_done;
+	long			wait_start_time;
 	t_dongle		*left_dongle;
 	t_dongle		*right_dongle;
 	struct s_sim	*sim;
