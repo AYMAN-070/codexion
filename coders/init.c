@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 16:12:27 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/04/23 22:24:10 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/05/06 10:44:03 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	init_coders(t_sim *sim)
 	i = 0;
 	while (i < sim->nb_coders)
 	{
-		sim->coders[i].id = i;
+		sim->coders[i].id = i + 1;
 		sim->coders[i].compiles_done = 0;
 		sim->coders[i].sim = sim;
 		sim->coders[i].left_dongle = &sim->dongles[i];

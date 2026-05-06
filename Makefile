@@ -8,7 +8,7 @@ SRCS = coders/main.c \
        coders/utils.c \
        coders/monitor.c
 OBJS = $(SRCS:.c=.o)
-HEADERS = codexion.h
+HEADERS = coders/codexion.h
 
 all: $(NAME)
 

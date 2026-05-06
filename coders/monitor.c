@@ -6,7 +6,7 @@
 /*   By: ayhammou <ayhammou@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 21:19:40 by ayhammou          #+#    #+#             */
-/*   Updated: 2026/05/03 15:40:48 by ayhammou         ###   ########.fr       */
+/*   Updated: 2026/05/06 10:43:13 by ayhammou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int	check_death(t_sim *sim, t_coder *coder)
 		pthread_mutex_unlock(&sim->dongles[j].mutex);
 	}
 	pthread_mutex_lock(&sim->print_mutex);
-	printf("%ld %d died\n",
+	printf("%ld %d burned out\n",
 		get_current_time_ms() - sim->start_time, coder->id);
 	pthread_mutex_unlock(&sim->print_mutex);
 	return (1);
